@@ -41,7 +41,12 @@ function Start-AnsibleControlNode
         # Tag of the docker ansible-control-node image. Defaults to the latest.
         [Parameter(Mandatory = $false)]
         [System.String]
-        $ImageTag = 'latest'
+        $ImageTag = 'latest',
+
+        # Hide the user information.
+        [Parameter(Mandatory = $false)]
+        [Switch]
+        $Silent
     )
 
     try
@@ -58,6 +63,7 @@ function Start-AnsibleControlNode
         {
             throw "The ansible config file was not found: $ansibleConfigPath"
         }
+        $RepositoryPath = (Resolve-Path -Path $RepositoryPath).Path
 
         # Check the SSH keys
         if (-not (Test-Path -Path $KeyPath))
@@ -68,6 +74,7 @@ function Start-AnsibleControlNode
         {
             throw 'No certificate files matching the wildcard pattern id_* found.'
         }
+        $KeyPath = (Resolve-Path -Path $KeyPath).Path
 
         # Check the docker desktop command
         if ($null -eq (Get-Command -Name 'docker.exe' -CommandType 'Application' -ErrorAction 'SilentlyContinue'))
@@ -79,13 +86,40 @@ function Start-AnsibleControlNode
             throw 'The Docker Desktop process was not found. Start Docker Desktop.'
         }
 
+        # Ensure the helper files and folders exist
+        $acnFolderName = '.ansible-control-node'
+        if (-not (Test-Path -Path "$RepositoryPath\$acnFolderName" -PathType 'Container'))
+        {
+            New-Item -Path "$RepositoryPath\$acnFolderName" -ItemType 'Directory' -Force | Out-Null
+        }
+        if (-not (Test-Path -Path "$RepositoryPath\$acnFolderName\.bash_history" -PathType 'Leaf'))
+        {
+            New-Item -Path "$RepositoryPath\$acnFolderName\.bash_history" -ItemType 'File' -Force | Out-Null
+        }
+
         # Prepare the docker parameters
-        $volumeKeys = '/{0}:/tmp/.ssh:ro' -f (Resolve-Path -Path $KeyPath).Path.Replace(':', '').Replace('\', '/').Trim('/')
-        $volumeRepo = '/{0}:/ansible' -f (Resolve-Path -Path $RepositoryPath).Path.Replace(':', '').Replace('\', '/').Trim('/')
-        $image      = '{0}:{1}' -f $ImageName, $ImageTag
+        $normalizedKeyPath  = $KeyPath.Replace(':', '').Replace('\', '/').Trim('/')
+        $normalizedRepoPath = $RepositoryPath.Replace(':', '').Replace('\', '/').Trim('/')
+        $volumeKeys        = '/{0}:/tmp/.ssh:ro' -f $normalizedKeyPath
+        $volumeBashHistory = '/{0}/{1}/.bash_history:/root/.bash_history' -f $normalizedRepoPath, $acnFolderName
+        $volumeAnsibleRepo = '/{0}:/ansible' -f $normalizedRepoPath
+        $image             = '{0}:{1}' -f $ImageName, $ImageTag
+
+        # User information
+        if (-not $Silent.IsPresent)
+        {
+            Write-Host ''
+            Write-Host 'ANSIBLE CONTROL NODE'
+            Write-Host '********************'
+            Write-Host ''
+            Write-Host "Ansible Repo: $RepositoryPath"
+            Write-Host "SSH Key Path: $KeyPath"
+            Write-Host "Docker Image: $image"
+            Write-Host ''
+        }
 
         # Start the docker image
-        docker.exe run -it --rm -v $volumeKeys -v $volumeRepo $image
+        docker.exe run -it --rm -v $volumeKeys -v $volumeBashHistory -v $volumeAnsibleRepo $image
     }
     catch
     {
