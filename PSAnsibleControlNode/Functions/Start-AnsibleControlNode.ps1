@@ -21,7 +21,7 @@
 function Start-AnsibleControlNode
 {
     [CmdletBinding(SupportsShouldProcess = $true, ConfirmImpact = 'Low')]
-    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingWriteHost')]
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingWriteHost', $null)]
     param
     (
         # Path to the ansible repository. Defaults to the current workind directory.
