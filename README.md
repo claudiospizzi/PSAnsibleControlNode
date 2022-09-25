@@ -4,7 +4,7 @@
 
 # PSAnsibleControlNode PowerShell Module
 
-PowerShell sidecar module for the docker image ansible-control-node.
+PowerShell sidecar module for the docker image [ansible-control-node].
 
 ## Features
 
@@ -55,6 +55,8 @@ Studio Code and ensure that the PowerShell extension is installed.
 
 * [Visual Studio Code] with the [PowerShell Extension]
 * [Pester], [PSScriptAnalyzer] and [psake] PowerShell Modules
+
+[ansible-control-node]: https://hub.docker.com/repository/docker/claudiospizzi/ansible-control-node
 
 [PowerShell Gallery]: https://www.powershellgallery.com/packages/PSAnsibleControlNode
 [GitHub Releases]: https://github.com/claudiospizzi/PSAnsibleControlNode/releases
