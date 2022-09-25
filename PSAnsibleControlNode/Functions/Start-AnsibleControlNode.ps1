@@ -20,7 +20,8 @@
 #>
 function Start-AnsibleControlNode
 {
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess = $true, ConfirmImpact = 'Low')]
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingWriteHost')]
     param
     (
         # Path to the ansible repository. Defaults to the current workind directory.
@@ -119,7 +120,10 @@ function Start-AnsibleControlNode
         }
 
         # Start the docker image
-        docker.exe run -it --rm -v $volumeKeys -v $volumeBashHistory -v $volumeAnsibleRepo $image
+        if ($PSCmdlet.ShouldProcess($image, 'Start Docker Container'))
+        {
+            docker.exe run -it --rm -v $volumeKeys -v $volumeBashHistory -v $volumeAnsibleRepo $image
+        }
     }
     catch
     {
