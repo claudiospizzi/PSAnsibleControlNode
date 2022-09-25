@@ -1,0 +1,13 @@
+
+TOPIC
+    about_PSAnsibleControlNode
+
+SHORT DESCRIPTION
+    PowerShell sidecar module for the docker image ansible-control-node.
+
+LONG DESCRIPTION
+    To get more information about this module, check the open source GitHub
+    repository readme or the cmdlet based help for the module functions:
+
+LINK
+    https://github.com/claudiospizzi/PSAnsibleControlNode
