@@ -170,10 +170,9 @@ function Start-AnsibleControlNode
             # Remove the 1Password key files after 10 seconds
             if ($PSCmdlet.ParameterSetName -eq '1Password')
             {
-                Start-Job -ArgumentList $KeyPath -ScriptBlock {
-                    param ($KeyPath)
+                Start-Job -ScriptBlock {
                     Start-Sleep -Seconds 10
-                    Remove-Item -Path $KeyPath -Force -Recurse
+                    Remove-Item -Path $using:KeyPath -Force -Recurse
                 } | Out-Null
             }
 

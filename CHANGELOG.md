@@ -1,11 +1,11 @@
-﻿# Changelog
+# Changelog
 
 All notable changes to this project will be documented in this file.
 
 The format is mainly based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## 1.1.0 - 2022-12-06
 
 * Added: Add support to use 1Password SSH keys via 1Password CLI
 
